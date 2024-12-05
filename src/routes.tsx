@@ -1,5 +1,5 @@
-import { FocusPageLayout, HeroTitle } from './design-system';
 import { LandingPage } from './landing/useCases/LandingPage';
+import { IntroPage } from './intro/useCases/IntroPage';
 
 export const routes = [
     {
@@ -8,12 +8,7 @@ export const routes = [
         element: <LandingPage />,
     },
     {
-        path: '/wip',
-        element: (
-            <FocusPageLayout>
-                <HeroTitle title="/WIP" disabled />
-                <p>To be implemented</p>
-            </FocusPageLayout>
-        ),
+        path: '/intro',
+        element: <IntroPage />,
     },
 ];
