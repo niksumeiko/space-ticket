@@ -1,0 +1,23 @@
+# Official JavaScript SDK from NASA
+
+It can audit tickets to space issued by different providers (e.g., SpaceX).
+
+### Usage
+
+##### Available interfaces:
+```ts
+export function auditTicket(ticketId: string): Promise<TicketAudit>;
+
+export type TicketAudit = {
+    auditId: string;
+    ticketId: string;
+    ticketType: 'ECONOMY' | 'PRIORITY' | 'BUSINESS' | 'FIRST';
+};
+```
+
+##### Implementation:
+```ts
+import { auditTicket } from 'nasa-client';
+
+const result = await auditTicket(ticketId);
+```

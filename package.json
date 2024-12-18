@@ -10,6 +10,7 @@
   "type": "module",
   "scripts": {
     "start": "npx vite",
+    "start:api": "json-server db.json5",
     "build": "tsc && vite build",
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}' --report-unused-disable-directives --fix",
     "format": "prettier --write 'src/**/*.{js,jsx,ts,tsx,css,md}'",
@@ -27,6 +28,8 @@
     "autoprefixer": "^10.4.20",
     "classnames": "^2.5.1",
     "dotenv": "^16.4.7",
+    "json-server": "1.0.0-beta.3",
+    "nasa-client": "file:packages/nasa-client",
     "postcss": "^8.4.49",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

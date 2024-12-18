@@ -34,14 +34,20 @@ Cypress.Commands.add('mount', (element, path, options, rerenderKey) => {
         .then(() =>
             mount(
                 <React.StrictMode>
-                    {element}
-                    {/* {React.cloneElement(element, { createRouter })} */}
+                    {React.cloneElement(element, { createRouter })}
                 </React.StrictMode>,
                 options,
                 rerenderKey,
             ),
         );
 });
+
+Cypress.Commands.add(
+    'getByTestId',
+    (testId: string): Cypress.Chainable<JQuery<HTMLElement>> => {
+        return cy.get(`[data-test="${testId}"]`);
+    },
+);
 
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -54,6 +60,7 @@ declare global {
                 options?: Partial<{ log: boolean }>,
                 rerenderKey?: string,
             ): Chainable<MountReturn>;
+            getByTestId(testId: string): Cypress.Chainable<JQuery<HTMLElement>>;
         }
     }
 }

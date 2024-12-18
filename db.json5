@@ -1,0 +1,6 @@
+{
+    ticket: {
+        destination: 'Mars',
+        departure: '2025-05-19T20:53:03.932Z',
+    }
+}

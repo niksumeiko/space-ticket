@@ -1,6 +1,4 @@
 const cypress = require('cypress');
-const cucumber = require('cypress-cucumber-preprocessor');
-const browserify = require('@cypress/browserify-preprocessor');
 
 module.exports = cypress.defineConfig({
     // numTestsKeptInMemory: 0,

@@ -22,8 +22,9 @@ export default defineConfig(({ mode }) => {
         },
         test: {
             include: ['**/*.test.ts'],
-            // globals: true,
             reportsDirectory: 'coverage',
+            // globals: true,
+            environment: 'node',
         },
         define: {
             // 'process.env.API_URL': JSON.stringify(env.API_URL),
