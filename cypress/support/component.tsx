@@ -3,15 +3,43 @@
 /// <reference types="../../node_modules/cypress/types/cypress" />
 /// <reference types="../../node_modules/cypress/types/cypress-global-vars" />
 /// <reference types="../../node_modules/cypress/types/cypress-type-helpers" />
-import type { ReactElement } from 'react';
-import React from 'react';
-import type { RouteObject } from 'react-router-dom';
-import { createHashRouter } from 'react-router-dom';
-import type { MountReturn } from 'cypress/react18';
-import { mount } from 'cypress/react18';
+import React, { type ReactElement } from 'react';
+import { createHashRouter, type RouteObject } from 'react-router-dom';
+import { mount, type MountReturn } from 'cypress/react18';
 
+import { App } from '../../src/App';
 import '../../src/index.css';
 import './commands';
+
+const injectRouter = (child: React.ReactNode): React.ReactNode => {
+    if (!React.isValidElement(child)) {
+        return child;
+    }
+
+    // Check if the element is App root
+    if (child.type === App) {
+        return React.cloneElement(child, {
+            // Inject router factory with HashRouter
+            createRouter: (routes: RouteObject[]) => createHashRouter(routes),
+        });
+    }
+
+    // If element isn't App and has children, traverse them one by one
+    if (child.props.children) {
+        const children = React.Children.toArray(child.props.children);
+
+        for (const grandChild of children) {
+            const newGrandChild = injectRouter(grandChild);
+
+            if (newGrandChild !== grandChild) {
+                // Found and cloned App, updating the parent and stop traversing
+                return React.cloneElement(child, {}, newGrandChild);
+            }
+        }
+    }
+
+    return child;
+};
 
 Cypress.Commands.overwriteQuery('url', () => {
     return () => {
@@ -22,8 +50,6 @@ Cypress.Commands.overwriteQuery('url', () => {
 });
 
 Cypress.Commands.add('mount', (element, path, options, rerenderKey) => {
-    const createRouter = (routes: RouteObject[]) => createHashRouter(routes);
-
     return cy
         .window()
         .then((w) => {
@@ -34,7 +60,7 @@ Cypress.Commands.add('mount', (element, path, options, rerenderKey) => {
         .then(() =>
             mount(
                 <React.StrictMode>
-                    {React.cloneElement(element, { createRouter })}
+                    {injectRouter(element)}
                 </React.StrictMode>,
                 options,
                 rerenderKey,
