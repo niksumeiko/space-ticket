@@ -6,9 +6,11 @@
 import {
     Children,
     cloneElement,
+    type ComponentProps,
     isValidElement,
+    type PropsWithChildren,
     type ReactElement,
-    ReactNode,
+    type ReactNode,
     StrictMode,
 } from 'react';
 import { createHashRouter, type RouteObject } from 'react-router-dom';
@@ -18,13 +20,17 @@ import { App } from '../../src/App';
 import '../../src/index.css';
 import './commands';
 
+function isApp(child: ReactElement): child is ReactElement<ComponentProps<typeof App>> {
+    return child.type === App;
+}
+
 const injectRouter = (child: ReactNode): ReactNode => {
-    if (!isValidElement(child)) {
+    if (!isValidElement<PropsWithChildren>(child)) {
         return child;
     }
 
     // Check if the element is App root
-    if (child.type === App) {
+    if (isApp(child)) {
         return cloneElement(child, {
             // Inject router factory with HashRouter
             createRouter: (routes: RouteObject[]) => createHashRouter(routes),
