@@ -3,7 +3,14 @@
 /// <reference types="../../node_modules/cypress/types/cypress" />
 /// <reference types="../../node_modules/cypress/types/cypress-global-vars" />
 /// <reference types="../../node_modules/cypress/types/cypress-type-helpers" />
-import React, { type ReactElement } from 'react';
+import {
+    Children,
+    cloneElement,
+    isValidElement,
+    type ReactElement,
+    ReactNode,
+    StrictMode,
+} from 'react';
 import { createHashRouter, type RouteObject } from 'react-router-dom';
 import { mount, type MountReturn } from 'cypress/react18';
 
@@ -11,14 +18,14 @@ import { App } from '../../src/App';
 import '../../src/index.css';
 import './commands';
 
-const injectRouter = (child: React.ReactNode): React.ReactNode => {
-    if (!React.isValidElement(child)) {
+const injectRouter = (child: ReactNode): ReactNode => {
+    if (!isValidElement(child)) {
         return child;
     }
 
     // Check if the element is App root
     if (child.type === App) {
-        return React.cloneElement(child, {
+        return cloneElement(child, {
             // Inject router factory with HashRouter
             createRouter: (routes: RouteObject[]) => createHashRouter(routes),
         });
@@ -26,14 +33,14 @@ const injectRouter = (child: React.ReactNode): React.ReactNode => {
 
     // If element isn't App and has children, traverse them one by one
     if (child.props.children) {
-        const children = React.Children.toArray(child.props.children);
+        const children = Children.toArray(child.props.children);
 
         for (const grandChild of children) {
             const newGrandChild = injectRouter(grandChild);
 
             if (newGrandChild !== grandChild) {
                 // Found and cloned App, updating the parent and stop traversing
-                return React.cloneElement(child, {}, newGrandChild);
+                return cloneElement(child, {}, newGrandChild);
             }
         }
     }
@@ -58,13 +65,7 @@ Cypress.Commands.add('mount', (element, path, options, rerenderKey) => {
             return path;
         })
         .then(() =>
-            mount(
-                <React.StrictMode>
-                    {injectRouter(element)}
-                </React.StrictMode>,
-                options,
-                rerenderKey,
-            ),
+            mount(<StrictMode>{injectRouter(element)}</StrictMode>, options, rerenderKey),
         );
 });
 
